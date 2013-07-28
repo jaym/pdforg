@@ -43,5 +43,17 @@ def upload():
     else:
         return render_template('upload.jinja2.html', page_upload="active")
 
+
+@app.route('/search', methods=['GET'])
+def search():
+    query = request.args.get('query', '')
+    if not query:
+        return redirect(url_for('index'))
+    documents = pdforg.search_documents(query)
+    return render_template('search.jinja2.html',
+                           documents=documents,
+                           page_home="active"
+                           )
+
 if __name__ == '__main__':
     app.run()

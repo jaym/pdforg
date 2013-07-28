@@ -3,6 +3,10 @@ import os
 import hashlib
 from pymongo import MongoClient
 import datetime
+import pdforg_index
+
+
+indexer = pdforg_index.PdfOrgIndex()
 
 
 def get_collection():
@@ -48,4 +52,14 @@ def save_document(title, file):
                            'date': datetime.datetime.now()
                            })
 
+        indexer.index_file(doc_id, title, doc_location)
+
     return doc_id
+
+
+def search_documents(query):
+    docs = indexer.search_content(query)
+    documents = []
+    for doc in docs:
+        documents.append(get_document_metadata(doc['doc_id']))
+    return documents

@@ -31,14 +31,15 @@ class PdfOrgIndex(object):
         while True:
             try:
                 doc_id, title, path = self.work_queue.get()
+                print "Got document %s" % (title)
                 content = unicode(commands.getoutput('pdftotext %s -' % (path)),
                                   errors='ignore')
                 writer = self.ix.writer()
-                writer.add_document(title=title, doc_id=doc_id,
+                writer.add_document(title=unicode(title), doc_id=unicode(doc_id),
                                     content=content)
                 writer.commit()
-            except:
-                pass
+            except Exception, err:
+                print err
 
     def index_file(self, doc_id, title, path):
         self.work_queue.put((doc_id, title, path), True)

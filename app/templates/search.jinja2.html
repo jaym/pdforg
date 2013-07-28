@@ -1,0 +1,30 @@
+{% extends 'layout.jinja2.html' %}
+
+{% block body %}
+<div class="pdforg-header">
+	<div class="container">
+		<h1>Search Results:</h1>
+	</div>
+</div>
+<div class"row">
+	<div class="col-lg-1">
+	</div>
+	<div class="col-lg-9">
+		<table class="table table-hover table-striped">
+			<thead>
+				<tr>
+					<th>Title</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for row in documents %}
+			<tr>
+				<td>{{ document_link(row.title, row.doc_id) }}</td>
+			</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+{% endblock %}
+
