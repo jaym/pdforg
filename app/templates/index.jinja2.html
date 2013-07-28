@@ -1,0 +1,28 @@
+{% extends 'layout.jinja2.html' %}
+
+{% block title %}Latest{% endblock %}
+
+{% block documents %}
+	<div class"row">
+		<div class="span8">
+		<table class="table table-hover table-striped">
+			<thead>
+				<tr>
+					<th>Category</th>
+					<th>Title</th>
+					<col width="30%">
+				</tr>
+			</thead>
+			<tbody>
+			{% for row in documents %}
+				<tr>
+					<td>{{ row.category }}</td>
+					<td>{{ row.title }}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	</div>
+{% endblock %}
+

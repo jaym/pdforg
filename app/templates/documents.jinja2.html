@@ -1,0 +1,18 @@
+{% from 'util.jinja2.html' import link_tag, script_tag, tracked_link, document_link %}
+{% block documents %}
+<table class="table table-hover table-striped">
+	<thead>
+		<tr>
+			<th>Title</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for row in documents|sort(attribute="date", reverse=True) %}
+	<tr>
+		<td>{{ document_link(row.title, row.doc_id) }}</td>
+	</tr>
+	{% endfor %}
+	</tbody>
+</table>
+{% endblock %}
+

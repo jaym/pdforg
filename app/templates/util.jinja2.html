@@ -1,0 +1,11 @@
+{%- macro link_tag(location) -%}
+        <link rel="stylesheet" href="/static/css/{{ location }}.css">
+{%- endmacro -%}
+
+{%- macro script_tag(location) -%}
+        <script src="/static/js/{{ location }}.js"></script>
+{%- endmacro -%}
+
+{%- macro document_link(title, doc_id) -%}
+        <a href="{{ url_for("document", doc_id=doc_id) }}">{{ title }}</a>
+{%- endmacro -%}
