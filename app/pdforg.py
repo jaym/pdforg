@@ -60,6 +60,8 @@ def save_document(title, file):
 def search_documents(query):
     docs = indexer.search_content(query)
     documents = []
+
+    # This is terrible
     for doc in docs:
         documents.append(get_document_metadata(doc['doc_id']))
     return documents

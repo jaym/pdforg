@@ -1,6 +1,7 @@
 from whoosh.index import create_in, open_dir
 from whoosh.fields import *
 from whoosh.qparser import QueryParser
+from whoosh.analysis import *
 import pdfOrgConf as conf
 import os
 import Queue
@@ -13,9 +14,13 @@ class PdfOrgIndex(object):
         if not index_path:
             index_path = conf.INDEX_PATH
 
+        self.analyzer = RegexTokenizer() | LowercaseFilter() | StopFilter() | \
+            StemFilter()
+
         if not os.path.exists(index_path):
             os.mkdir(index_path)
-            schema = Schema(title=TEXT(stored=True), content=TEXT,
+            schema = Schema(title=TEXT(stored=True, analyzer=self.analyzer),
+                            content=TEXT(analyzer=self.analyzer),
                             doc_id=ID(stored=True))
             self.ix = create_in(index_path, schema)
         else:
@@ -35,7 +40,8 @@ class PdfOrgIndex(object):
                 content = unicode(commands.getoutput('pdftotext %s -' % (path)),
                                   errors='ignore')
                 writer = self.ix.writer()
-                writer.add_document(title=unicode(title), doc_id=unicode(doc_id),
+                writer.add_document(title=unicode(title),
+                                    doc_id=unicode(doc_id),
                                     content=content)
                 writer.commit()
             except Exception, err:
