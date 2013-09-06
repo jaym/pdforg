@@ -7,6 +7,8 @@ import pdforg_index
 
 
 indexer = pdforg_index.PdfOrgIndex()
+if not os.path.exists(conf.DOCUMENT_PATH):
+    os.mkdir(conf.DOCUMENT_PATH)
 
 
 def get_collection():
@@ -24,27 +26,27 @@ def latest_documents():
     return documents
 
 
-def save_document(title, file):
+def save_document(title, fileObj):
     if not len(title):
-        title = file.filename
+        title = fileObj.filename
 
-    if file.mimetype not in conf.ALLOWED_DOC_TYPES:
+    if set(fileObj.mimetype).isdisjoint(set(conf.ALLOWED_DOC_TYPES)):
         return None
 
-    hash = hashlib.md5()
+    fileHash = hashlib.md5()
 
-    hash.update(file.read())
+    fileHash.update(fileObj.read())
 
-    file.seek(0)
-    doc_id = hash.hexdigest()
-    doc_location = os.path.join(conf.DOCUMENT_PATH, "%s.pdf" % (doc_id))
+    fileObj.seek(0)
+    doc_id = fileHash.hexdigest()
+    doc_location = "%s.pdf" % (doc_id)
     collection = get_collection()
     existing = collection.find_one({"doc_id":  doc_id})
 
     if not existing:
-        file.save(doc_location)
+        fileObj.save(doc_location)
         collection.insert({'doc_id': doc_id,
-                           'filename': file.filename,
+                           'filename': fileObj.filename,
                            'location': doc_location,
                            'title': title,
                            'categories': [],
@@ -65,3 +67,4 @@ def search_documents(query):
     for doc in docs:
         documents.append(get_document_metadata(doc['doc_id']))
     return documents
+
