@@ -1,12 +1,13 @@
-from whoosh.index import create_in, open_dir
-from whoosh.fields import *
 from whoosh.qparser import QueryParser
-from whoosh.analysis import *
+import whoosh.analysis
+import whoosh.fields
+import whoosh.index
 import pdfOrgConf as conf
 import os
 import Queue
 import threading
 import commands
+import glob
 
 
 class PdfOrgIndex(object):
@@ -14,17 +15,18 @@ class PdfOrgIndex(object):
         if not index_path:
             index_path = conf.INDEX_PATH
 
-        self.analyzer = RegexTokenizer() | LowercaseFilter() | StopFilter() | \
-            StemFilter()
+        self.analyzer = whoosh.analysis.RegexTokenizer() | whoosh.analysis.LowercaseFilter() | \
+            whoosh.analysis.StopFilter() | whoosh.analysis.StemFilter()
 
-        if not os.path.exists(index_path):
-            os.mkdir(index_path)
-            schema = Schema(title=TEXT(stored=True, analyzer=self.analyzer),
-                            content=TEXT(analyzer=self.analyzer),
-                            doc_id=ID(stored=True))
-            self.ix = create_in(index_path, schema)
+        if not os.path.exists(index_path) or len(glob.glob(index_path+"/*")) == 0:
+            if not os.path.exists(index_path):
+                os.mkdir(index_path)
+            schema = whoosh.fields.Schema(title=whoosh.fields.TEXT(stored=True, analyzer=self.analyzer),
+                            content=whoosh.fields.TEXT(analyzer=self.analyzer),
+                            doc_id=whoosh.fields.ID(stored=True))
+            self.ix = whoosh.index.create_in(index_path, schema)
         else:
-            self.ix = open_dir(index_path)
+            self.ix = whoosh.index.open_dir(index_path)
 
         self.work_queue = Queue.Queue()
         self.worker_thread = threading.Thread(target=self.indexer)
@@ -69,3 +71,6 @@ class PdfOrgIndex(object):
                 r.append({'doc_id': hit['doc_id'], 'title': hit['title']})
 
             return r
+
+if __name__ == "__main__":
+    PdfOrgIndex()

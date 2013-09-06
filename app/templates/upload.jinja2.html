@@ -18,5 +18,14 @@
 		<button type="submit" class="btn btn-primary">Upload</button>
 	</form>
 </div>
+<div class="container">
+	<form action='{{url_for('scan_dir') }}' method="post" enctype="multipart/form-data">
+		<div class="form-group">
+			<label for="srcPath">Source Path</label>
+			<input id="srcPath" type="text" class="form-control" name="src_path" placeholder="~/">
+		</div>
+		<button type="submit" class="btn btn-primary">Scan folder</button>
+	</form>
+</div>
 {% endblock %}
 
